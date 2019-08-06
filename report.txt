@@ -1,0 +1,158 @@
+# Good Features make problems TRIVIAl
+
+##
+## THE BEST ARCHITECTURE FOR 6 WAY CLASSIFICATION IS EXP 3 WITH ""ACCURACY 23.3""  AND FOR 2 WAAY CLASSIFICATION EXP 1 WITH "ACCURACY 62.2".
+##
+### more details can be found in the later sections.
+
+
+
+
+
+0. Related to fake news:-
+	
+	Fact-checking is a journalistic practice that compares a claim made publicly against trusted sources of facts.Automatic fake news detection is a challenging problem in deception detection,and it has tremendous real-world political and social impacts. The problem of fake news detection is more challenging than detecting deceptive reviews, since the political language on TV interviews, posts on Facebook and Twitters are mostly short statements.
+
+1. About the dataset:-
+
+	LIAR-PLUS data is built upon the orginal LIAR dataset released by [1]. LIAR-PLUS data contains an additional, column Justification for the statement made by humans.
+	More information related to this can be found in the paper[2]. Apart from that the dataset is same. This is a dataset of political statements from PolitiFact. more details can be found in the paper[1].
+
+2. Analysing Dataset (Preliminary):-
+
+	2.1 LIAR dataset[4]:-
+		It has 14 columns in total. A detailed study can be found at [3]. As mentioned in the study most of the features have uniform distribution means learning anything useful using those features is as predicting randomly ( at elast for 6 way classification). some of them are state, party,barely_true_cts,false_cts. I also wrote a script to look at the trends and found the same.
+
+	2.2 LIAR_PLUS dataset [5]:-
+		Apart from an additional column containing the justfication for the given label, the dataseet is same.
+
+	2.3 data Preprocessing:-
+		A basic data processing has been done. Cleaned and preprocessed the text data by using some basic techniques such as removing stopwords and punctuation and lemmatization. The entire pipeline is illustrated in the helpers.py file taken from [].
+
+3. Literature Review:-
+
+	In the paper[1], they have tried different approaches for the classification task. out of all LR and SVM gives comparable results to their CNN based model (for the statement column as a feature ). LSTM did not work well for them,because of the fact of overfitting as the dataset is small. They have shown when combined meta data with the statement (text) Marginally improvements were achieved.
+
+	In the paper[2], they have shown/proved that the justification provided by the humans alone increses the accuracy of all the models when compared without it.
+
+4. survey of models/architecture trained/tried on the LIAR dataset.
+
+	An initial survey was done to see the different approaches that has been tried on this dataset for the specific problem i.e. classsification. The author in the paper [1] tried different architectures and all of them gave almost comparable results for "statement alone as feature", and with additional feature the accuracy goes up marginally.
+
+	They [3] achieved an accuracy "for 6 way classification task"
+	0.25% using NLTK Naive Bayes
+	0.19% using Random forest
+	0.21% using LR & SVM
+	'statement' only as an input feature [3].
+	AND around 0.25% with "additional meta information".
+
+	They [3] achieved an accuracy "for 2 way classification task"
+	0.61% using NLTK Naive Bayes
+	'statement' only as an input feature [3].
+	AND around 0.63% with "additional meta information".
+
+	similar accuracy can be found for DEEP LEARNING MODELS in result section of paper [1] and [2].
+
+
+5. Experimentation_S ( with "statement" as input only):- 
+
+# I used dropout to avoid overfitting
+
+
+	5.1 "6" and "2" way classificaion :- All models are trained for 15 epochs with lr =0.001 and adam optimzer with CrossEntropy Loss. batch size of 512 was used for training.
+
+		5.1.1 ag of Words(BOW) + FF(feed forward NN):- # I call it EXP 1.
+
+			I used this model/architecture as a baseline for any future comparisions w.r.t any DEEP NN architecture. The results were almose same as mentioned in the paper. 
+
+		5.1.2 Embeddings (of 300 size vector, GLOVE) + gru:- # I call it EXP 2.
+
+			I tried 2 variants of the above model i.e. uni/bi directional.  
+
+			UNI-diretional gru variant gave better accuracy in case of trained on trainig data only, with a significant margin of 3% increase on the test case. Further analysis is required to made any concrete comments on why this is the case. 
+
+		5.1.3 I also tried training the model combined on train + valid data: I call it EXP 3
+
+		5.1.4 trained the EXP 2 for more number of epochs with : I call it EXP 4
+
+6. Experimentation_S* ( with 'statement'and 'justification' as input):- 
+
+	SAME AS MENTIONED IN SECTION 5, 
+	except this time the input to the architecture is combined text: 'statement'and 'justification'
+
+
+7. Results:-
+	
+	7.1 Experimentation_S:- "statement as feature only" or LIAR dataset
+		7.1.1 EXP 1:- LIAR datset
+########	#### 6- way classification
+			The accuracy for EXP 1 is 21 %. there are no embeddings used instead only BOWs are used an input.
+
+########	#### 2- way classification
+			The accuracy for EXP 1 is 62.2%.
+
+		7.1.2 EXP 2:-
+########	#### 6-way classification
+			7.1.2.1 UNI = The accuracy is 20.5 %.
+			7.1.2.2 BI = The accuracy is 21.5 %
+
+
+########	#### 2-way classification
+			7.1.2.3 UNI = The accuracy is 60.09 %.
+			7.1.2.4 BI = The accuracy is 60.1 %
+
+
+	7.2 Experimentation_S*:- 'statement'and 'justification' as features or LIAR_PLUS dataset
+		7.2.1 EXP 2:-
+########	#### 6-way classification
+			7.2.1.1 UNI = The accuracy is 19.9 %.
+			7.2.1.2 BI = The accuracy is 21.07 %
+
+
+########	#### 2-way classification
+			7.2.1.3 UNI = The accuracy is 61.5 %.
+			7.2.1.4 BI = The accuracy is 61.48 %
+
+	7.3 EXP 3 :- Total data
+########	#### 6-way classification,Experimentation_S
+		7.3.1 BI = The accuracy is 23.3 %
+
+########	#### 2-way classification,Experimentation_S*
+		7.3.2 BI = The accuracy is 55.2 %
+
+	7.4 EXP 4 :- for more number of epochs
+########	#### 6-way classification
+		7.4.1 UNI = The accuracy is 61.5 %.
+
+
+# THE BEST ARCHITECTURE FOR 6 WAY CLASSIFICATION IS EXP 3 WITH ""ACCURACY 23.3""  AND FOR 2 WAAY CLASSIFICATION EXP 1 WITH "ACCURACY 62.2".
+
+
+
+
+
+6. Conclusion:-
+
+	 Experimentation shows that BOTH THE ARCHITECTURES I.E. UNI/BI GRUs give same accuracy. therefore, it can be conlcuded that there is not enough data to learn the representation or the distribution of data is uniform. Also, embedding layer in EXP 2 (encodes higher dimension information of the word) helps to boost the accuracy. EXP 3 shows that using train and val data combined to train is a bad idea as the accuracy drops further. Therfore, it can be concluded that the given data is very less to use deep learning approaches, and it is evident from EXP 3 results. Also, EXP 3 shows accuracy detriots as it is overfitting the data. EXP4 result shows that even training it for more epochs the accuracy does not increase, in contrast it decreases(can be seen in the script).
+
+Therefore, because of the size of the data,i would suggest to use basic ML classifier like NAIVE BAYES, LR and SVM a shown in [3] gives superior results than deep architectures. Apart from that adding more information does not help in classification at all(maybe beacuse of the architecture i used). therefore, more analysis is required for any concrete comments.
+
+
+
+7. Future Work
+	
+	Since, because of the time limitation the results from different models could not be analyzed.
+	Therefore, in the future, results can be analyzed to get a deeper understanding of the data and what the algorithm is doing.
+	Apart from that, we can also try BERT architecture as it gives better accuracy compared to word embeddings. Apart from bert CNN based 		architecture can also be tried for feature extraction
+
+
+
+
+REFRENCES:-
+
+1. https://arxiv.org/pdf/1705.00648.pdf
+2. https://aclweb.org/anthology/W18-5513
+3. https://github.com/mikanikos/ADA_Project
+4. https://github.com/thiagorainmaker77/liar_dataset
+5. ​https://github.com/Tariq60/LIAR-PLUS/tree/master/dataset
+
